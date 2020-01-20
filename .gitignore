@@ -1,3 +1,11 @@
+# Environment
 venv/
+
+# Editors
 .vscode/
+
+# Cache and build files
 __pycache__/
+build/
+dist/
+schema_validator_halpa.egg-info/
