@@ -1,0 +1,42 @@
+{
+    "type": "object",
+    "required": [
+        "name",
+        "age",
+        "hired_at"
+    ],
+    "definitions": {
+        "marrigeTypes": {
+            "enum": [
+                "married",
+                "single"
+            ]
+        }
+    },
+    "properties": {
+        "name": {
+            "type": "string"
+        },
+        "age": {
+            "type": "number"
+        },
+        "hired_at": {
+            "type": "string",
+            "format": "date"
+        },
+        "pattern": {
+            "type": "string",
+            "format": "regex"
+        },
+        "readonly": {
+            "type": "boolean"
+        },
+        "married": {
+            "anyOf": [
+                {
+                    "$ref": "#definitions/marrigeTypes"
+                }
+            ]
+        }
+    }
+}
