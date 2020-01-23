@@ -69,7 +69,8 @@ def test_validator_decorator_valid():
     def decorator_test():
         return "expected_result"
 
-    assert decorator_test() == "expected_result"
+    print("decorator:", decorator_test())
+    assert decorator_test() == True
 
 
 @pytest.mark.decorator
@@ -82,6 +83,7 @@ def test_validator_decorator_invalid():
     def decorator_test():
         return "expected_result"
 
+    print("decorator:", decorator_test())
     assert decorator_test() == {'fields': {'age': 'age is required'}}
 
 
