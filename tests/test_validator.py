@@ -1,9 +1,11 @@
 import os
 from pprint import pprint
+import json
 
 import pytest
 
 from validator import is_valid, validate
+from validator.decorators import validate as validate_decorator
 
 test_schema = {
     "type": "object",
@@ -55,6 +57,48 @@ def test_validator_valid():
     print(validation)
     assert validation==True
 
+
+@pytest.mark.decorator
+def test_validator_decorator_valid():
+    @validate_decorator(test_schema, {
+        "name": "Daniel",
+        "age": 30,
+        "hired_at": "1970-01-01",
+        "married": "married"
+    })
+    def decorator_test():
+        return "expected_result"
+
+    assert decorator_test() == "expected_result"
+
+
+@pytest.mark.decorator
+def test_validator_decorator_invalid():
+    @validate_decorator(test_schema, {
+        "name": "Daniel",
+        "hired_at": "1970-01-01",
+        "married": "married"
+    })
+    def decorator_test():
+        return "expected_result"
+
+    assert decorator_test() == {'fields': {'age': 'age is required'}}
+
+
+@pytest.mark.validator
+def test_validator_invalid_if_not_dict():
+    # Observe! Below uses json.dumps to cast data to string, which should not validate
+    data = json.dumps({
+        "name": "Daniel",
+        "age": 30,
+        "hired_at": "1970-01-01",
+        "married": "married"
+    })
+    validation = validate(test_schema, data)
+    print(validation)
+    assert validation=={'data': 'data is not a dictionary'}
+
+
 @pytest.mark.validator
 def test_validator_missing_required():
     validation = validate(test_schema, {
@@ -63,6 +107,7 @@ def test_validator_missing_required():
     })
     print(validation)
     assert validation=={'fields': {'name': 'name is required'}}
+
 
 @pytest.mark.validator
 def test_validator_wrong_type():
@@ -73,6 +118,7 @@ def test_validator_wrong_type():
     })
     print(validation)
     assert validation=={'fields': {'age': "'thirty' is not of type 'number'"}}
+
 
 @pytest.mark.validator
 def test_validator_missing_required_and_wrong_type():
@@ -86,6 +132,7 @@ def test_validator_missing_required_and_wrong_type():
         'age': "'thirty' is not of type 'number'"
     }}
 
+
 @pytest.mark.validator
 def test_validator_wrong_format():
     validation = validate(test_schema, {
@@ -97,6 +144,7 @@ def test_validator_wrong_format():
     assert validation=={'fields': {
         'hired_at': "'last year' is not a 'date'"
     }}
+
 
 @pytest.mark.validator
 def test_validator_wrong_anyof_from_reference():
@@ -111,6 +159,7 @@ def test_validator_wrong_anyof_from_reference():
         'married': "'poly' is not valid under any of the given schemas"
     }}
 
+
 @pytest.mark.validator
 def test_validator_with_file():
     absolute_path = os.path.dirname(os.path.abspath(__file__))
@@ -124,6 +173,7 @@ def test_validator_with_file():
     print(validation)
     assert validation==True
 
+
 @pytest.mark.validator
 def test_validator_missing_required_with_file():
     absolute_path = os.path.dirname(os.path.abspath(__file__))
@@ -135,6 +185,7 @@ def test_validator_missing_required_with_file():
     })
     print(validation)
     assert validation=={'fields': {'name': 'name is required'}}
+
 
 @pytest.mark.validator
 def test_validator_with_non_existing_file():
@@ -149,6 +200,7 @@ def test_validator_with_non_existing_file():
     print(validation)
     assert validation=={'schema': 'schema file does not exist'}
 
+
 @pytest.mark.validator
 def test_validator_with_is_valid():
     validation = is_valid(test_schema, {
@@ -159,6 +211,7 @@ def test_validator_with_is_valid():
     print(validation)
     assert validation==True
 
+
 @pytest.mark.validator
 def test_validator_with_is_valid_wrong_format():
     validation = is_valid(test_schema, {
@@ -168,6 +221,7 @@ def test_validator_with_is_valid_wrong_format():
     })
     print(validation)
     assert validation==False
+
 
 @pytest.mark.validator
 def test_validator_with_is_valid_with_file():
@@ -181,6 +235,7 @@ def test_validator_with_is_valid_with_file():
     })
     print(validation)
     assert validation==True
+
 
 @pytest.mark.validator
 def test_validator_with_is_valid_missing_required_with_file():
@@ -211,7 +266,7 @@ def test_validator_with_is_valid_with_non_existing_file():
     except FileNotFoundError as file_not_found:
         exception_raised = True
         exception_message = str(file_not_found)[-34:]
-    
+
     assert exception_raised==True
     assert exception_message=="does-not-exist.json does not exist"
 
@@ -229,6 +284,6 @@ def test_validator_with_is_valid_with_invalid_schema():
     except ValueError as value_error:
         exception_raised = True
         exception_message = str(value_error)
-    
+
     assert exception_raised==True
     assert exception_message=="'sting' is not valid under any of the given schemas"
