@@ -20,4 +20,5 @@ setuptools.setup(
     ],
     python_requires='>=3.6',
     build_requires=['simplejson>=3.17.0', 'jsonschema>=3.2.0']
+    install_requires=['simplejson>=3.17.0', 'jsonschema>=3.2.0']
 )
