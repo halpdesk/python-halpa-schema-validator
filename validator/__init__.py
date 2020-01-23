@@ -8,7 +8,7 @@ from jsonschema.exceptions import ErrorTree, SchemaError
 from jsonschema.exceptions import _Error as Error
 
 def load_validator(schema):
-    """ Validates JSON schema (Draft 7 Validator) 
+    """ Validates JSON schema (Draft 7 Validator)
         Raises SchemaError if schema check shows errors in schema
     """
     # Instantiate the Draft 7 Validator with format checker
@@ -18,14 +18,14 @@ def load_validator(schema):
 
 
 def validate(schema, data):
-    """ Validates JSON schema (Draft 7 Validator) and tests data against it
-        Returns True if schema and data is valid, or otherwise a dict with well formatted errors
+    """ Validates JSON schema (Draft 7 Validator) and tests data (dictionary) against it\n
+        Returns True if schema and data is valid, or otherwise a dictionary with well formatted errors
     """
-    
+
     errors = {}
 
     # If schema is a file
-    try: 
+    try:
         if type(schema) is not dict:
             schema = _load_json_file(schema)
     except FileNotFoundError as file_not_found:
@@ -37,7 +37,12 @@ def validate(schema, data):
     except SchemaError as schema_error:
         errors["schema"] = schema_error.message
         return errors
-    
+
+    # Check that data is a dictionary
+    if type(data) is not dict:
+        errors["data"] = "data is not a dictionary"
+        return errors
+
 
     # Check required fields
     try:
@@ -75,7 +80,7 @@ def is_valid(schema, data):
     if type(schema) is not dict:
         schema = _load_json_file(schema)
 
-    try: 
+    try:
         load_validator(schema)
     except SchemaError as schema_error:
         raise ValueError(schema_error.message)
