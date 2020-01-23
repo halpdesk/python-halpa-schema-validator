@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="schema-validator-halpa",
-    version="0.0.1",
+    version="0.0.3",
     author="Daniel Leppänen",
     author_email="daniel.leppanen@gmail.com",
     description="A utility to validate JSON schemas with jsonschema with simplejson",
@@ -19,6 +19,6 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     python_requires='>=3.6',
-    build_requires=['simplejson>=3.17.0', 'jsonschema>=3.2.0']
+    build_requires=['simplejson>=3.17.0', 'jsonschema>=3.2.0'],
     install_requires=['simplejson>=3.17.0', 'jsonschema>=3.2.0']
 )
